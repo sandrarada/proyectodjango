@@ -8,8 +8,8 @@ def home(request):
     return render(request,'home.html',context)
 
 def agregar(request):
-    if request.method=="Post":
-        form=TareaForm(redirect.Post)
+    if request.method=="POST":
+        form=TareaForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect('home')
@@ -17,3 +17,20 @@ def agregar(request):
         form=TareaForm()
     context={'form': form}
     return render(request,'agregar.html',context)
+
+def eliminar(request,tarea_id):
+    tarea=Tarea.objects.get(id=tarea_id)
+    tarea.delete()
+    return redirect("home")
+
+def editar(request, tarea_id):
+    tarea=Tarea.objects.get(id=tarea_id)
+    if request.method=="POST":
+        form=TareaForm(request.POST,instance=tarea)
+        if form.is_valid():
+            form.save()
+            return redirect("home")
+    else:
+        form=TareaForm(instance=tarea)
+    context={"form":form}
+    return render(request,"editar.html",context)
